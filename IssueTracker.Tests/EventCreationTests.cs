@@ -7,11 +7,8 @@ namespace IssueTracker.Tests
     {
         private class When_I_create_an_issue : IssueCreationService.ICreateIssues
         {
-            private bool _issueCreated;
-            private string _issueCreator;
-            private DateTime _issueTimeStamp = DateTime.MinValue;
             private readonly DateTime _testStartTime = DateTime.UtcNow;
-
+            private IssueCreationService.Issue _issue;
             private const string CreatedBy = "Paul Houslton";
 
             public When_I_create_an_issue()
@@ -22,26 +19,24 @@ namespace IssueTracker.Tests
             [Test]
             public void Then_the_issue_is_created()
             {
-                Assert.IsTrue(_issueCreated);
+                Assert.IsNotNull(_issue);
             }
 
             [Test]
             public void And_the_creator_is_assigned_to_the_event()
             {
-                Assert.AreEqual(CreatedBy, _issueCreator);
+                Assert.AreEqual(CreatedBy, _issue.CreatedBy);
             }
 
             [Test]
             public void And_the_current_UTC_timestamp_is_added_to_the_event()
             {
-                Assert.GreaterOrEqual(_issueTimeStamp, _testStartTime);
+                Assert.GreaterOrEqual(_issue.CreatedTime, _testStartTime);
             }
 
-            public void CreateIssue(string createdBy, DateTime createdTime)
+            public void CreateIssue(IssueCreationService.Issue issue)
             {
-                _issueCreator = createdBy;
-                _issueCreated = true;
-                _issueTimeStamp = createdTime;
+                _issue = issue;
             }
         }
     }
@@ -52,7 +47,13 @@ namespace IssueTracker.Tests
 
         public interface ICreateIssues
         {
-            void CreateIssue(string createdBy, DateTime createdTime);
+            void CreateIssue(Issue issue);
+        }
+
+        public class Issue
+        {
+            public string CreatedBy { get; set; }
+            public DateTime CreatedTime { get; set; } 
         }
 
         public IssueCreationService(ICreateIssues issueCreator)
@@ -62,7 +63,9 @@ namespace IssueTracker.Tests
 
         public void CreateIssue(string createdBy)
         {
-            _issueCreator.CreateIssue(createdBy, DateTime.UtcNow);
+            _issueCreator.CreateIssue(new Issue{
+               CreatedBy  = createdBy,
+               CreatedTime = DateTime.UtcNow});
         }
     }
 }
