@@ -34,6 +34,12 @@ namespace IssueTracker.Tests
                 Assert.GreaterOrEqual(_issue.CreatedTime, _testStartTime);
             }
 
+            [Test]
+            public void And_the_ID_of_the_newly_created_event_is_returned()
+            {
+                Assert.AreEqual(1, _issue.Id);
+            }
+
             public void CreateIssue(IssueCreationService.Issue issue)
             {
                 _issue = issue;
@@ -53,7 +59,8 @@ namespace IssueTracker.Tests
         public class Issue
         {
             public string CreatedBy { get; set; }
-            public DateTime CreatedTime { get; set; } 
+            public DateTime CreatedTime { get; set; }
+            public int Id { get; set; }
         }
 
         public IssueCreationService(ICreateIssues issueCreator)
