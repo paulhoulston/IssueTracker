@@ -9,6 +9,7 @@ namespace IssueTracker.Tests
         {
             private readonly DateTime _testStartTime = DateTime.UtcNow;
             private IssueCreationService.Issue _issue;
+            private const int ExpectedIssueId = 1;
             private const string CreatedBy = "Paul Houslton";
 
             public When_I_create_an_issue()
@@ -37,12 +38,13 @@ namespace IssueTracker.Tests
             [Test]
             public void And_the_ID_of_the_newly_created_event_is_returned()
             {
-                Assert.AreEqual(1, _issue.Id);
+                Assert.AreEqual(ExpectedIssueId, _issue.Id);
             }
 
             public void CreateIssue(IssueCreationService.Issue issue)
             {
                 _issue = issue;
+                issue.Id = ExpectedIssueId;
             }
         }
     }
@@ -70,9 +72,11 @@ namespace IssueTracker.Tests
 
         public void CreateIssue(string createdBy)
         {
-            _issueCreator.CreateIssue(new Issue{
-               CreatedBy  = createdBy,
-               CreatedTime = DateTime.UtcNow});
+            _issueCreator.CreateIssue(new Issue
+            {
+                CreatedBy = createdBy,
+                CreatedTime = DateTime.UtcNow
+            });
         }
     }
 }
