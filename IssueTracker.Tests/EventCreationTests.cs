@@ -8,24 +8,29 @@ namespace IssueTracker.Tests
         {
             private bool _issueCreated;
             private string _issueCreator;
+            
+            private const string CreatedBy = "Paul Houslton";
+
+            public When_I_create_an_issue()
+            {
+                new IssueCreationService(this).CreateIssue(CreatedBy);
+            }
 
             [Test]
             public void Then_the_issue_is_created()
             {
-                new IssueCreationService(this).CreateIssue("");
                 Assert.IsTrue(_issueCreated);
             }
 
             [Test]
             public void And_the_creator_is_assigned_to_the_event()
             {
-
-                new IssueCreationService(this).CreateIssue("Paul Houslton");
-                Assert.AreEqual("Paul Houlston", _issueCreator);
+                Assert.AreEqual(CreatedBy, _issueCreator);
             }
 
-            public void CreateIssue()
+            public void CreateIssue(string createdBy)
             {
+                _issueCreator = createdBy;
                 _issueCreated = true;
             }
         }
@@ -37,7 +42,7 @@ namespace IssueTracker.Tests
 
         public interface ICreateIssues
         {
-            void CreateIssue();
+            void CreateIssue(string createdBy);
         }
 
         public IssueCreationService(ICreateIssues issueCreator)
@@ -47,7 +52,7 @@ namespace IssueTracker.Tests
 
         public void CreateIssue(string createdBy)
         {
-            _issueCreator.CreateIssue();
+            _issueCreator.CreateIssue(createdBy);
         }
     }
 }
