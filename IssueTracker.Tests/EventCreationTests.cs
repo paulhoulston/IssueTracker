@@ -10,6 +10,7 @@ namespace IssueTracker.Tests
             private bool _issueCreated;
             private string _issueCreator;
             private DateTime _issueTimeStamp = DateTime.MinValue;
+            private readonly DateTime _testStartTime = DateTime.UtcNow;
 
             private const string CreatedBy = "Paul Houslton";
 
@@ -33,13 +34,14 @@ namespace IssueTracker.Tests
             [Test]
             public void And_the_current_UTC_timestamp_is_added_to_the_event()
             {
-                Assert.GreaterOrEqual(_issueTimeStamp, DateTime.UtcNow);
+                Assert.GreaterOrEqual(_issueTimeStamp, _testStartTime);
             }
 
-            public void CreateIssue(string createdBy)
+            public void CreateIssue(string createdBy, DateTime createdTime)
             {
                 _issueCreator = createdBy;
                 _issueCreated = true;
+                _issueTimeStamp = createdTime;
             }
         }
     }
@@ -50,7 +52,7 @@ namespace IssueTracker.Tests
 
         public interface ICreateIssues
         {
-            void CreateIssue(string createdBy);
+            void CreateIssue(string createdBy, DateTime createdTime);
         }
 
         public IssueCreationService(ICreateIssues issueCreator)
@@ -60,7 +62,7 @@ namespace IssueTracker.Tests
 
         public void CreateIssue(string createdBy)
         {
-            _issueCreator.CreateIssue(createdBy);
+            _issueCreator.CreateIssue(createdBy, DateTime.UtcNow);
         }
     }
 }
