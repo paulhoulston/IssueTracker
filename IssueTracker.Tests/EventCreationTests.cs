@@ -2,23 +2,43 @@
 
 namespace IssueTracker.Tests
 {
-    class Given_I_want_to_create_an_issue
+    internal class Given_I_want_to_create_an_issue
     {
-        class When_I_create_an_issue
+        private class When_I_create_an_issue : IssueCreationService.ICreateIssues
         {
+            private bool _issueCreated;
+
             [Test]
             public void Then_the_issue_is_created()
             {
-                Assert.IsTrue(new IssueCreationService().CreateIssue());
+                new IssueCreationService(this).CreateIssue();
+                Assert.IsTrue(_issueCreated);
+            }
+
+            public void CreateIssue()
+            {
+                _issueCreated = true;
             }
         }
     }
 
-    class IssueCreationService
+    internal class IssueCreationService
     {
-        public bool CreateIssue()
+        private readonly ICreateIssues _issueCreator;
+
+        public interface ICreateIssues
         {
-            return true;
+            void CreateIssue();
+        }
+
+        public IssueCreationService(ICreateIssues issueCreator)
+        {
+            _issueCreator = issueCreator;
+        }
+
+        public void CreateIssue()
+        {
+            _issueCreator.CreateIssue();
         }
     }
 }
