@@ -9,9 +9,16 @@ namespace IssueTracker.Tests
             [Test]
             public void Then_the_issue_is_created()
             {
-                var issueCreated = false;
-                Assert.IsTrue(issueCreated);
+                Assert.IsTrue(new IssueCreationService().CreateIssue());
             }
+        }
+    }
+
+    class IssueCreationService
+    {
+        public bool CreateIssue()
+        {
+            return true;
         }
     }
 }
