@@ -92,6 +92,7 @@
     </Compile>
     <Compile Include="IssuesController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IssueCreationService.cs" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>
