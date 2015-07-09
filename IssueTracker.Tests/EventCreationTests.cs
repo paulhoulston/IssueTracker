@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 
 namespace IssueTracker.Tests
 {
@@ -8,7 +9,8 @@ namespace IssueTracker.Tests
         {
             private bool _issueCreated;
             private string _issueCreator;
-            
+            private DateTime _issueTimeStamp = DateTime.MinValue;
+
             private const string CreatedBy = "Paul Houslton";
 
             public When_I_create_an_issue()
@@ -26,6 +28,12 @@ namespace IssueTracker.Tests
             public void And_the_creator_is_assigned_to_the_event()
             {
                 Assert.AreEqual(CreatedBy, _issueCreator);
+            }
+
+            [Test]
+            public void And_the_current_UTC_timestamp_is_added_to_the_event()
+            {
+                Assert.GreaterOrEqual(_issueTimeStamp, DateTime.UtcNow);
             }
 
             public void CreateIssue(string createdBy)
