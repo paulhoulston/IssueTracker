@@ -31,7 +31,30 @@ namespace IssueTracker.Adapters
             }
         }
 
-        public async Task<T> GetItem(string collectionId, Expression<Func<T, bool>> predicate)
+        public async Task UpdateItem(string collectionId, T item)
+        {
+            using (var client = new DocumentClient(_serviceEndpoint, _authKeyOrResourceToken))
+            {
+                var collection = await DocumentCollection(collectionId, client);
+                var document = client.CreateDocumentQuery(collection.DocumentsLink).Where(doc => doc.Id == item.Id).AsEnumerable().FirstOrDefault();
+                await client.ReplaceDocumentAsync(document.SelfLink, item);
+            }
+        }
+
+        public async Task GetItem(string collectionId, Expression<Func<T, bool>> predicate, Func<Task> onItemNotFound, Func<T, Task> onItemFound)
+        {
+            var item = await GetItem(collectionId, predicate);
+            if (item == null)
+            {
+                onItemNotFound();
+            }
+            else
+            {
+                onItemFound(item);
+            }
+        }
+
+        private async Task<T> GetItem(string collectionId, Expression<Func<T, bool>> predicate)
         {
             T item;
             using (var client = new DocumentClient(_serviceEndpoint, _authKeyOrResourceToken))
@@ -44,16 +67,6 @@ namespace IssueTracker.Adapters
                         .AsEnumerable().FirstOrDefault();
             }
             return item;
-        }
-
-        public async Task UpdateItem(string collectionId, T item)
-        {
-            using (var client = new DocumentClient(_serviceEndpoint, _authKeyOrResourceToken))
-            {
-                var collection = await DocumentCollection(collectionId, client);
-                var document = client.CreateDocumentQuery(collection.DocumentsLink).Where(doc => doc.Id == item.Id).AsEnumerable().FirstOrDefault();
-                await client.ReplaceDocumentAsync(document.SelfLink, item);
-            }
         }
 
         private static async Task<DocumentCollection> DocumentCollection(string collectionId, DocumentClient client)

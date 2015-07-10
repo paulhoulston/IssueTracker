@@ -18,22 +18,23 @@ namespace IssueTracker.Adapters
 
         public async Task<int> GetNextId()
         {
+            var issueId = 1;
             try
             {
                 await Locker.WaitAsync();
 
-                var item = await _docDbAdapter.GetItem(CollectionId, id => true);
-                if (item == null)
-                {
-                    item = new IssueId {CurrentIssueId = 1};
-                    await _docDbAdapter.AddItem(item, CollectionId);
-                }
-                else
-                {
-                    item.CurrentIssueId++;
-                    await _docDbAdapter.UpdateItem(CollectionId, item);
-                }
-                return item.CurrentIssueId;
+                await _docDbAdapter.GetItem(
+                    CollectionId,
+                    id => true,
+                    () => _docDbAdapter.AddItem(new IssueId {CurrentIssueId = 1}, CollectionId),
+                    item =>
+                    {
+                        item.CurrentIssueId++;
+                        issueId = item.CurrentIssueId;
+                        return _docDbAdapter.UpdateItem(CollectionId, item);
+                    });
+
+                return issueId;
             }
             finally
             {
