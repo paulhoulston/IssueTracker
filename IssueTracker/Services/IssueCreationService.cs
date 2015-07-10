@@ -41,14 +41,17 @@ namespace IssueTracker.Services
             _eventIdGetter = eventIdGetter;
         }
 
-        public async Task CreateIssue(string createdBy)
+        public async Task CreateIssue(string createdBy, Action<Issue> onIssueCreated)
         {
-            await _issueCreator.CreateIssue(new Issue
+            var issue = new Issue
             {
                 IssueId = await _eventIdGetter.GetNextId(),
                 CreatedBy = createdBy,
                 CreatedTime = DateTime.UtcNow
-            });
+            };
+            await _issueCreator.CreateIssue(issue);
+
+            onIssueCreated(issue);
         }
     }
 }

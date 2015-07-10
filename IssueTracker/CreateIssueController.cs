@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Threading.Tasks;
 using System.Web.Http;
 using IssueTracker.Adapters;
@@ -24,8 +25,11 @@ namespace IssueTracker
             var response = new HttpResponseMessage();
             try
             {
-                await new IssueCreationService(_issueCreator, _idGetter).CreateIssue(issue.CreatedBy);
-                response.StatusCode = HttpStatusCode.Created;
+                await new IssueCreationService(_issueCreator, _idGetter).CreateIssue(issue.CreatedBy, item =>
+                {
+                    response.StatusCode = HttpStatusCode.Created;
+                    response.Content = new ObjectContent(typeof (object), new {uri = string.Format("/Issues/{0}", item.IssueId)}, new JsonMediaTypeFormatter());
+                });
             }
             catch (Exception ex)
             {

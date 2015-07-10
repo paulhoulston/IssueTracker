@@ -17,7 +17,7 @@ namespace IssueTracker.Tests
             [TestFixtureSetUp]
             public void SetUp()
             {
-                Task.Run(async () => await new IssueCreationService(this, this).CreateIssue(CreatedBy));
+                Task.Run(async () => await new IssueCreationService(this, this).CreateIssue(CreatedBy, issue => _issue = issue));
             }
 
             [Test]
@@ -46,7 +46,7 @@ namespace IssueTracker.Tests
 
             public async Task CreateIssue(IssueCreationService.Issue issue)
             {
-                _issue = issue;
+                //nothing to do.
             }
 
             public async Task<int> GetNextId()
