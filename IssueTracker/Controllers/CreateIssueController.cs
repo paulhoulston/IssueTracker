@@ -5,6 +5,7 @@ using System.Net.Http.Formatting;
 using System.Threading.Tasks;
 using System.Web.Http;
 using IssueTracker.Adapters;
+using IssueTracker.Attributes;
 using IssueTracker.Services;
 
 namespace IssueTracker.Controllers
@@ -19,7 +20,7 @@ namespace IssueTracker.Controllers
             public string CreatedBy { get; set; }
         }
 
-        [HttpPost, Route("Issues")]
+        [PostRoute("Issues")]
         public async Task<HttpResponseMessage> Post(Issue issue)
         {
             var response = new HttpResponseMessage();

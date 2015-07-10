@@ -95,6 +95,7 @@
     <Compile Include="Adapters\DocumentDbDatabase.cs" />
     <Compile Include="Adapters\IssueIdRepository.cs" />
     <Compile Include="Adapters\IssueRepository.cs" />
+    <Compile Include="Attributes\HttpVerbConstrainedRouteAttribute.cs" />
     <Compile Include="Controllers\CreateIssueController.cs" />
     <Compile Include="Controllers\GetIssueController.cs" />
     <Compile Include="Global.asax.cs">

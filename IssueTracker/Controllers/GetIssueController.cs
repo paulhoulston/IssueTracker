@@ -4,6 +4,7 @@ using System.Net.Http.Formatting;
 using System.Threading.Tasks;
 using System.Web.Http;
 using IssueTracker.Adapters;
+using IssueTracker.Attributes;
 using IssueTracker.Services.Models;
 
 namespace IssueTracker.Controllers
@@ -12,7 +13,7 @@ namespace IssueTracker.Controllers
     {
         private readonly DocumentDbAdapter<Issue> _docDbAdapter = new DocumentDbAdapter<Issue>();
 
-        [HttpGet, Route("Issues/{issueId:int}")]
+        [GetRoute("Issues/{issueId:int}")]
         public async Task<HttpResponseMessage> Get(int issueId)
         {
             var response = new HttpResponseMessage();
