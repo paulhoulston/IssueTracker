@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Linq.Expressions;
@@ -58,6 +59,15 @@ namespace IssueTracker.Adapters
                 var collection = await DocumentCollection(_collectionId, client);
                 var document = client.CreateDocumentQuery(collection.DocumentsLink).Where(doc => doc.Id == item.Id).AsEnumerable().FirstOrDefault();
                 await client.ReplaceDocumentAsync(document.SelfLink, item);
+            }
+        }
+
+        public async Task<IEnumerable<T>> ListItems()
+        {
+            using (var client = new DocumentClient(_serviceEndpoint, _authKeyOrResourceToken))
+            {
+                var collection = await DocumentCollection(_collectionId, client);
+                return client.CreateDocumentQuery<T>(collection.DocumentsLink).AsEnumerable().ToArray();
             }
         }
 

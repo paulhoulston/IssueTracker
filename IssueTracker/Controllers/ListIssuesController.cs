@@ -1,15 +1,21 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Http;
+using IssueTracker.Adapters;
 using IssueTracker.Attributes;
+using IssueTracker.Services.Models;
 
 namespace IssueTracker.Controllers
 {
     public class ListIssuesController : ApiController
     {
+        private readonly DocumentDbAdapter<Issue> _docDbAdapter = new DocumentDbAdapter<Issue>();
+
         [GetRoute("Issues")]
-        public async Task<dynamic> Get()
+        public async Task<IEnumerable<dynamic>> Get()
         {
-            return new dynamic[] { new { Item = "item 1" }, new { Item = "item 2" }, new { Item = "item 3" } };
+            return (await _docDbAdapter.ListItems()).Select(issue => new { Uri = string.Format("Issues/{0}", issue.IssueId)});
         }
     }
 }
