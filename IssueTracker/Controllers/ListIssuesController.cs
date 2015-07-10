@@ -9,7 +9,7 @@ namespace IssueTracker.Controllers
         [GetRoute("Issues")]
         public async Task<dynamic> Get()
         {
-            return new dynamic[] { new { item = "item 1" }, new { item = "item 2" }, new { item = "item 3" } };
+            return new dynamic[] { new { Item = "item 1" }, new { Item = "item 2" }, new { Item = "item 3" } };
         }
     }
 }

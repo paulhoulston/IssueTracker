@@ -1,7 +1,6 @@
 using System;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Threading.Tasks;
 using System.Web.Http;
 using IssueTracker.Adapters;
@@ -12,8 +11,7 @@ namespace IssueTracker.Controllers
 {
     public class CreateIssueController : ApiController
     {
-        private readonly IssueCreationService.ICreateIssues _issueCreator = new IssueRepository();
-        private readonly IssueCreationService.IGetEventIds _idGetter = new IssueIdRepository();
+        private readonly IssueCreationService _service = new IssueCreationService(new IssueRepository(), new IssueIdRepository());
 
         public class Issue
         {
@@ -23,21 +21,16 @@ namespace IssueTracker.Controllers
         [PostRoute("Issues")]
         public async Task<HttpResponseMessage> Post(Issue issue)
         {
-            var response = new HttpResponseMessage();
+            HttpResponseMessage response = null;
             try
             {
-                await new IssueCreationService(_issueCreator, _idGetter).CreateIssue(issue.CreatedBy, item =>
-                {
-                    response.StatusCode = HttpStatusCode.Created;
-                    response.Content = new ObjectContent(typeof (object), new {uri = string.Format("/Issues/{0}", item.IssueId)}, new JsonMediaTypeFormatter());
-                });
+                await _service.CreateIssue(
+                    issue.CreatedBy,
+                    item => response = Request.CreateResponse(HttpStatusCode.Created, new {Uri = string.Format("/Issues/{0}", item.IssueId)}));
             }
             catch (Exception ex)
             {
-                response.StatusCode = HttpStatusCode.InternalServerError;
-#if DEBUG
-                response.Content = new StringContent(ex.Message);
-#endif
+                response = Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
             }
 
             return response;

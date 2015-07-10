@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Threading.Tasks;
 using System.Web.Http;
 using IssueTracker.Adapters;
@@ -16,14 +15,10 @@ namespace IssueTracker.Controllers
         [GetRoute("Issues/{issueId:int}")]
         public async Task<HttpResponseMessage> Get(int issueId)
         {
-            var response = new HttpResponseMessage();
+            HttpResponseMessage response = null;
             await _docDbAdapter.GetItem(issue => issue.IssueId == issueId,
-                async () => response.StatusCode = HttpStatusCode.NotFound,
-                async issue =>
-                {
-                    response.StatusCode = HttpStatusCode.NotFound;
-                    response.Content = new ObjectContent(issue.GetType(), issue, new JsonMediaTypeFormatter());
-                });
+                async () => response = Request.CreateResponse(HttpStatusCode.NotFound),
+                async issue => response = Request.CreateResponse(HttpStatusCode.OK, issue));
 
             return response;
         }
