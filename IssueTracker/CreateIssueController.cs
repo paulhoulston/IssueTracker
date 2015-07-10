@@ -21,7 +21,7 @@ namespace IssueTracker
         {
             try
             {
-                await new IssueCreationService(_issueCreator).CreateIssue(issue.CreatedBy);
+                await new IssueCreationService(_issueCreator, null).CreateIssue(issue.CreatedBy);
 
                 return new HttpResponseMessage(HttpStatusCode.Created);
             }

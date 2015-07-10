@@ -7,16 +7,17 @@ namespace IssueTracker.Tests
 {
     internal class Given_I_want_to_create_an_issue
     {
-        private class When_I_create_an_issue : IssueCreationService.ICreateIssues
+        private class When_I_create_an_issue : IssueCreationService.ICreateIssues, IssueCreationService.IGetEventIds
         {
             private readonly DateTime _testStartTime = DateTime.UtcNow;
             private IssueCreationService.Issue _issue;
             private const int ExpectedIssueId = 1;
             private const string CreatedBy = "Paul Houslton";
 
-            public When_I_create_an_issue()
+            [TestFixtureSetUp]
+            public void SetUp()
             {
-                Task.Run(async () => await new IssueCreationService(this).CreateIssue(CreatedBy));
+                Task.Run(async () => await new IssueCreationService(this, this).CreateIssue(CreatedBy));
             }
 
             [Test]
@@ -38,17 +39,19 @@ namespace IssueTracker.Tests
             }
 
             [Test]
-            public void And_the_ID_of_the_newly_created_event_is_returned()
+            public void And_the_expected_ID_is_assigned_to_an_event()
             {
                 Assert.AreEqual(ExpectedIssueId, _issue.IssueId);
             }
 
-            public Task CreateIssue(IssueCreationService.Issue issue)
+            public async Task CreateIssue(IssueCreationService.Issue issue)
             {
                 _issue = issue;
-                issue.IssueId = ExpectedIssueId;
+            }
 
-                return new Task(() => { });
+            public async Task<int> GetNextId()
+            {
+                return ExpectedIssueId;
             }
         }
     }
