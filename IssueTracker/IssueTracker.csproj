@@ -91,6 +91,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adapters\DocumentDbAdapter.cs" />
+    <Compile Include="Adapters\DocumentDbCollection.cs" />
+    <Compile Include="Adapters\DocumentDbDatabase.cs" />
     <Compile Include="Adapters\IssueRepository.cs" />
     <Compile Include="CreateIssueController.cs" />
     <Compile Include="Global.asax.cs">
