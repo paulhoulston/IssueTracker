@@ -90,6 +90,9 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adapters\DocumentDbAdapter.cs" />
+    <Compile Include="Adapters\IssueRepository.cs" />
+    <Compile Include="CreateIssueController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
