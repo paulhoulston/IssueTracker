@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using IssueTracker.Services;
 using NUnit.Framework;
 
@@ -42,10 +43,12 @@ namespace IssueTracker.Tests
                 Assert.AreEqual(ExpectedIssueId, _issue.Id);
             }
 
-            public void CreateIssue(IssueCreationService.Issue issue)
+            public Task CreateIssue(IssueCreationService.Issue issue)
             {
                 _issue = issue;
                 issue.Id = ExpectedIssueId;
+
+                return new Task(() => { });
             }
         }
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace IssueTracker.Services
 {
@@ -8,7 +9,7 @@ namespace IssueTracker.Services
 
         public interface ICreateIssues
         {
-            void CreateIssue(Issue issue);
+            Task CreateIssue(Issue issue);
         }
 
         public class Issue
