@@ -10,6 +10,7 @@ namespace IssueTracker
     public class CreateIssueController : ApiController
     {
         private readonly IssueCreationService.ICreateIssues _issueCreator = new IssueRepository();
+        private readonly IssueCreationService.IGetEventIds _idGetter = new IssueIdService();
 
         public class Issue
         {
@@ -21,7 +22,7 @@ namespace IssueTracker
         {
             try
             {
-                await new IssueCreationService(_issueCreator, null).CreateIssue(issue.CreatedBy);
+                await new IssueCreationService(_issueCreator, _idGetter).CreateIssue(issue.CreatedBy);
 
                 return new HttpResponseMessage(HttpStatusCode.Created);
             }
@@ -29,6 +30,14 @@ namespace IssueTracker
             {
                 return new HttpResponseMessage(HttpStatusCode.InternalServerError);
             }
+        }
+    }
+
+    internal class IssueIdService : IssueCreationService.IGetEventIds
+    {
+        public async Task<int> GetNextId()
+        {
+            return 1;
         }
     }
 }
