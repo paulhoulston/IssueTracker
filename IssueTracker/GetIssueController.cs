@@ -4,13 +4,13 @@ using System.Net.Http.Formatting;
 using System.Threading.Tasks;
 using System.Web.Http;
 using IssueTracker.Adapters;
-using IssueTracker.Services;
+using IssueTracker.Services.Models;
 
 namespace IssueTracker
 {
     public class GetIssueController : ApiController
     {
-        private readonly DocumentDbAdapter<IssueCreationService.Issue> _docDbAdapter = new DocumentDbAdapter<IssueCreationService.Issue>();
+        private readonly DocumentDbAdapter<Issue> _docDbAdapter = new DocumentDbAdapter<Issue>();
 
         [HttpGet, Route("Issues/{issueId:int}")]
         public async Task<HttpResponseMessage> Get(int issueId)

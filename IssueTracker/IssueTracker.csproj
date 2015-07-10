@@ -102,6 +102,8 @@
     <Compile Include="GetIssueController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IssueCreationService.cs" />
+    <Compile Include="Services\Models\Issue.cs" />
+    <Compile Include="Services\Models\IssueId.cs" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>

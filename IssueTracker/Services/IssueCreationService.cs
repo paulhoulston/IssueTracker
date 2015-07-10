@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using IssueTracker.Adapters;
+using IssueTracker.Services.Models;
 
 namespace IssueTracker.Services
 {
@@ -17,22 +17,6 @@ namespace IssueTracker.Services
         public interface IGetEventIds
         {
             Task<int> GetNextId();
-        }
-
-        [DocumentCollectionId("Issues")]
-        public class Issue : IDocumentItem
-        {
-            public string Id { get; private set; }
-            public string CreatedBy { get; set; }
-            public DateTime CreatedTime { get; set; }
-            public int IssueId { get; set; }
-        }
-
-        [DocumentCollectionId("IssueIds")]
-        public class IssueId : IDocumentItem
-        {
-            public string Id { get; set; }
-            public int CurrentIssueId { get; set; }
         }
 
         public IssueCreationService(ICreateIssues issueCreator, IGetEventIds eventIdGetter)

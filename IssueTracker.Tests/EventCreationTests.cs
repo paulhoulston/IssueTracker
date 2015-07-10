@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using IssueTracker.Services;
+using IssueTracker.Services.Models;
 using NUnit.Framework;
 
 namespace IssueTracker.Tests
@@ -10,7 +11,7 @@ namespace IssueTracker.Tests
         private class When_I_create_an_issue : IssueCreationService.ICreateIssues, IssueCreationService.IGetEventIds
         {
             private readonly DateTime _testStartTime = DateTime.UtcNow;
-            private IssueCreationService.Issue _issue;
+            private Issue _issue;
             private const int ExpectedIssueId = 1;
             private const string CreatedBy = "Paul Houslton";
 
@@ -44,7 +45,7 @@ namespace IssueTracker.Tests
                 Assert.AreEqual(ExpectedIssueId, _issue.IssueId);
             }
 
-            public async Task CreateIssue(IssueCreationService.Issue issue)
+            public async Task CreateIssue(Issue issue)
             {
                 //nothing to do.
             }

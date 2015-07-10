@@ -1,13 +1,14 @@
 ﻿using System.Threading.Tasks;
 using IssueTracker.Services;
+using IssueTracker.Services.Models;
 
 namespace IssueTracker.Adapters
 {
     internal class IssueRepository : IssueCreationService.ICreateIssues
     {
-        private readonly DocumentDbAdapter<IssueCreationService.Issue> _docDbAdapter = new DocumentDbAdapter<IssueCreationService.Issue>();
+        private readonly DocumentDbAdapter<Issue> _docDbAdapter = new DocumentDbAdapter<Issue>();
 
-        public async Task CreateIssue(IssueCreationService.Issue issue)
+        public async Task CreateIssue(Issue issue)
         {
             await _docDbAdapter.AddItem(issue);
         }

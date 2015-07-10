@@ -1,12 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using IssueTracker.Services;
+using IssueTracker.Services.Models;
 
 namespace IssueTracker.Adapters
 {
     internal class IssueIdRepository : IssueCreationService.IGetEventIds
     {
-        private readonly DocumentDbAdapter<IssueCreationService.IssueId> _docDbAdapter = new DocumentDbAdapter<IssueCreationService.IssueId>();
+        private readonly DocumentDbAdapter<IssueId> _docDbAdapter = new DocumentDbAdapter<IssueId>();
         private static readonly SemaphoreSlim Locker = new SemaphoreSlim(1);
 
         public async Task<int> GetNextId()
@@ -17,7 +18,7 @@ namespace IssueTracker.Adapters
                 await Locker.WaitAsync();
 
                 await _docDbAdapter.GetItem(id => true,
-                    () => _docDbAdapter.AddItem(new IssueCreationService.IssueId {CurrentIssueId = 1}),
+                    () => _docDbAdapter.AddItem(new IssueId {CurrentIssueId = 1}),
                     item =>
                     {
                         item.CurrentIssueId++;
