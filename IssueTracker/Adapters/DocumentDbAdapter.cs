@@ -6,10 +6,17 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
+using Newtonsoft.Json;
 
 namespace IssueTracker.Adapters
 {
-    class DocumentDbAdapter<T> where T : class
+    interface IDocumentItem
+    {
+        [JsonProperty(PropertyName = "id")]
+        string Id { get; }
+    }
+
+    class DocumentDbAdapter<T> where T : IDocumentItem
     {
         private readonly string _authKeyOrResourceToken = ConfigurationManager.AppSettings["authKey"];
         private readonly Uri _serviceEndpoint = new Uri(ConfigurationManager.AppSettings["endpoint"]);
@@ -17,7 +24,11 @@ namespace IssueTracker.Adapters
 
         public async Task AddItem(T item, string collectionId)
         {
-            await PerformAction(collectionId, (client, collection) => client.CreateDocumentAsync(collection.SelfLink, item));
+            using (var client = new DocumentClient(_serviceEndpoint, _authKeyOrResourceToken))
+            {
+                var collection = await DocumentCollection(collectionId, client);
+                await client.CreateDocumentAsync(collection.SelfLink, item);
+            }
         }
 
         public async Task<T> GetItem(string collectionId, Expression<Func<T, bool>> predicate)
@@ -35,12 +46,13 @@ namespace IssueTracker.Adapters
             return item;
         }
 
-        private async Task PerformAction(string collectionId, Func<DocumentClient, DocumentCollection, Task> actionToPerform)
+        public async Task UpdateItem(string collectionId, T item)
         {
             using (var client = new DocumentClient(_serviceEndpoint, _authKeyOrResourceToken))
             {
                 var collection = await DocumentCollection(collectionId, client);
-                await actionToPerform(client, collection);
+                var document = client.CreateDocumentQuery(collection.DocumentsLink).Where(doc => doc.Id == item.Id).AsEnumerable().FirstOrDefault();
+                await client.ReplaceDocumentAsync(document.SelfLink, item);
             }
         }
 

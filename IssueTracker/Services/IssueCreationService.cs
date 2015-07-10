@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using IssueTracker.Adapters;
 
 namespace IssueTracker.Services
 {
@@ -18,8 +19,9 @@ namespace IssueTracker.Services
             Task<int> GetNextId();
         }
 
-        public class Issue
+        public class Issue : IDocumentItem
         {
+            public string Id { get; private set; }
             public string CreatedBy { get; set; }
             public DateTime CreatedTime { get; set; }
             public int IssueId { get; set; }
