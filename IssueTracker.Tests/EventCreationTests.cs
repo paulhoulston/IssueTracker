@@ -16,7 +16,7 @@ namespace IssueTracker.Tests
 
             public When_I_create_an_issue()
             {
-                new IssueCreationService(this).CreateIssue(CreatedBy);
+                Task.Run(async () => await new IssueCreationService(this).CreateIssue(CreatedBy));
             }
 
             [Test]

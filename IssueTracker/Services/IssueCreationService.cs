@@ -24,9 +24,9 @@ namespace IssueTracker.Services
             _issueCreator = issueCreator;
         }
 
-        public void CreateIssue(string createdBy)
+        public async Task CreateIssue(string createdBy)
         {
-            _issueCreator.CreateIssue(new Issue
+            await _issueCreator.CreateIssue(new Issue
             {
                 CreatedBy = createdBy,
                 CreatedTime = DateTime.UtcNow
