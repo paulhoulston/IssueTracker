@@ -66,11 +66,11 @@ namespace IssueTracker.Adapters
             var item = await GetItem(predicate);
             if (item == null)
             {
-                onItemNotFound();
+                await onItemNotFound();
             }
             else
             {
-                onItemFound(item);
+                await onItemFound(item);
             }
         }
 
