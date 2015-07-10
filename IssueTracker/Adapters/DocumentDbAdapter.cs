@@ -27,7 +27,7 @@ namespace IssueTracker.Adapters
         string Id { get; }
     }
 
-    class DocumentDbAdapter<T> where T : IDocumentItem
+    class DocumentDbAdapter<T> where T : class, IDocumentItem
     {
         private readonly string _authKeyOrResourceToken = ConfigurationManager.AppSettings["authKey"];
         private readonly Uri _serviceEndpoint = new Uri(ConfigurationManager.AppSettings["endpoint"]);
@@ -45,29 +45,39 @@ namespace IssueTracker.Adapters
 
         public async Task AddItem(T item)
         {
-            using (var client = new DocumentClient(_serviceEndpoint, _authKeyOrResourceToken))
-            {
-                var collection = await DocumentCollection(_collectionId, client);
-                await client.CreateDocumentAsync(collection.SelfLink, item);
-            }
+            await PerformFunction((client, collection) => client.CreateDocumentAsync(collection.SelfLink, item));
         }
 
         public async Task UpdateItem(T item)
         {
-            using (var client = new DocumentClient(_serviceEndpoint, _authKeyOrResourceToken))
+            await PerformFunction(async (client, collection) =>
             {
-                var collection = await DocumentCollection(_collectionId, client);
                 var document = client.CreateDocumentQuery(collection.DocumentsLink).Where(doc => doc.Id == item.Id).AsEnumerable().FirstOrDefault();
                 await client.ReplaceDocumentAsync(document.SelfLink, item);
-            }
+            });
         }
 
         public async Task<IEnumerable<T>> ListItems()
         {
+            T[] items = null;
+            await PerformAction((client, collection) => items = client.CreateDocumentQuery<T>(collection.DocumentsLink).AsEnumerable().ToArray());
+            return items;
+        }
+
+        private async Task PerformFunction(Func<DocumentClient, DocumentCollection, Task> actionToPerform)
+        {
             using (var client = new DocumentClient(_serviceEndpoint, _authKeyOrResourceToken))
             {
                 var collection = await DocumentCollection(_collectionId, client);
-                return client.CreateDocumentQuery<T>(collection.DocumentsLink).AsEnumerable().ToArray();
+                await actionToPerform(client, collection);
+            }
+        }
+        private async Task PerformAction(Action<DocumentClient, DocumentCollection> actionToPerform)
+        {
+            using (var client = new DocumentClient(_serviceEndpoint, _authKeyOrResourceToken))
+            {
+                var collection = await DocumentCollection(_collectionId, client);
+                actionToPerform(client, collection);
             }
         }
 
@@ -86,16 +96,8 @@ namespace IssueTracker.Adapters
 
         private async Task<T> GetItem(Expression<Func<T, bool>> predicate)
         {
-            T item;
-            using (var client = new DocumentClient(_serviceEndpoint, _authKeyOrResourceToken))
-            {
-                var collection = await DocumentCollection(_collectionId, client);
-                item =
-                    client
-                        .CreateDocumentQuery<T>(collection.DocumentsLink)
-                        .Where(predicate)
-                        .AsEnumerable().FirstOrDefault();
-            }
+            T item = null;
+            await PerformAction((client, collection) => item = client.CreateDocumentQuery<T>(collection.DocumentsLink).Where(predicate).AsEnumerable().FirstOrDefault());
             return item;
         }
 
