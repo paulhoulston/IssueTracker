@@ -95,11 +95,11 @@
     <Compile Include="Adapters\DocumentDbDatabase.cs" />
     <Compile Include="Adapters\IssueIdRepository.cs" />
     <Compile Include="Adapters\IssueRepository.cs" />
-    <Compile Include="CreateIssueController.cs" />
+    <Compile Include="Controllers\CreateIssueController.cs" />
+    <Compile Include="Controllers\GetIssueController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="GetIssueController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IssueCreationService.cs" />
     <Compile Include="Services\Models\Issue.cs" />

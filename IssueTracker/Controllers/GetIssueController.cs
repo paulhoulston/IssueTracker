@@ -6,7 +6,7 @@ using System.Web.Http;
 using IssueTracker.Adapters;
 using IssueTracker.Services.Models;
 
-namespace IssueTracker
+namespace IssueTracker.Controllers
 {
     public class GetIssueController : ApiController
     {
