@@ -9,7 +9,7 @@ namespace IssueTracker.Adapters
 
         public async Task CreateIssue(IssueCreationService.Issue issue)
         {
-            await _docDbAdapter.AddItem(issue, "Issues");
+            await _docDbAdapter.AddItem(issue);
         }
     }
 }

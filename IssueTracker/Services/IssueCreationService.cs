@@ -19,6 +19,7 @@ namespace IssueTracker.Services
             Task<int> GetNextId();
         }
 
+        [DocumentCollectionId("Issues")]
         public class Issue : IDocumentItem
         {
             public string Id { get; private set; }

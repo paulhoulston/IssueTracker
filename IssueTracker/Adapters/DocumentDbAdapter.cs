@@ -10,6 +10,16 @@ using Newtonsoft.Json;
 
 namespace IssueTracker.Adapters
 {
+    internal class DocumentCollectionIdAttribute : Attribute
+    {
+        public readonly string CollectionId;
+
+        public DocumentCollectionIdAttribute(string collectionId)
+        {
+            CollectionId = collectionId;
+        }
+    }
+
     interface IDocumentItem
     {
         [JsonProperty(PropertyName = "id")]
@@ -20,30 +30,40 @@ namespace IssueTracker.Adapters
     {
         private readonly string _authKeyOrResourceToken = ConfigurationManager.AppSettings["authKey"];
         private readonly Uri _serviceEndpoint = new Uri(ConfigurationManager.AppSettings["endpoint"]);
+        private readonly string _collectionId;
         private const string DatabaseName = "IssueTracker";
 
-        public async Task AddItem(T item, string collectionId)
+        public DocumentDbAdapter()
+        {
+            var tType = typeof (T);
+            var attr = Attribute.GetCustomAttribute(tType, typeof(DocumentCollectionIdAttribute)) as DocumentCollectionIdAttribute;
+            _collectionId = attr == null
+                ? tType.Name
+                : attr.CollectionId;
+        }
+
+        public async Task AddItem(T item)
         {
             using (var client = new DocumentClient(_serviceEndpoint, _authKeyOrResourceToken))
             {
-                var collection = await DocumentCollection(collectionId, client);
+                var collection = await DocumentCollection(_collectionId, client);
                 await client.CreateDocumentAsync(collection.SelfLink, item);
             }
         }
 
-        public async Task UpdateItem(string collectionId, T item)
+        public async Task UpdateItem(T item)
         {
             using (var client = new DocumentClient(_serviceEndpoint, _authKeyOrResourceToken))
             {
-                var collection = await DocumentCollection(collectionId, client);
+                var collection = await DocumentCollection(_collectionId, client);
                 var document = client.CreateDocumentQuery(collection.DocumentsLink).Where(doc => doc.Id == item.Id).AsEnumerable().FirstOrDefault();
                 await client.ReplaceDocumentAsync(document.SelfLink, item);
             }
         }
 
-        public async Task GetItem(string collectionId, Expression<Func<T, bool>> predicate, Func<Task> onItemNotFound, Func<T, Task> onItemFound)
+        public async Task GetItem(Expression<Func<T, bool>> predicate, Func<Task> onItemNotFound, Func<T, Task> onItemFound)
         {
-            var item = await GetItem(collectionId, predicate);
+            var item = await GetItem(predicate);
             if (item == null)
             {
                 onItemNotFound();
@@ -54,12 +74,12 @@ namespace IssueTracker.Adapters
             }
         }
 
-        private async Task<T> GetItem(string collectionId, Expression<Func<T, bool>> predicate)
+        private async Task<T> GetItem(Expression<Func<T, bool>> predicate)
         {
             T item;
             using (var client = new DocumentClient(_serviceEndpoint, _authKeyOrResourceToken))
             {
-                var collection = await DocumentCollection(collectionId, client);
+                var collection = await DocumentCollection(_collectionId, client);
                 item =
                     client
                         .CreateDocumentQuery<T>(collection.DocumentsLink)
