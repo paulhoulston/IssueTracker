@@ -16,7 +16,7 @@ namespace IssueTracker.Services
         {
             public string CreatedBy { get; set; }
             public DateTime CreatedTime { get; set; }
-            public int Id { get; set; }
+            public int IssueId { get; set; }
         }
 
         public IssueCreationService(ICreateIssues issueCreator)

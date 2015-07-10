@@ -40,13 +40,13 @@ namespace IssueTracker.Tests
             [Test]
             public void And_the_ID_of_the_newly_created_event_is_returned()
             {
-                Assert.AreEqual(ExpectedIssueId, _issue.Id);
+                Assert.AreEqual(ExpectedIssueId, _issue.IssueId);
             }
 
             public Task CreateIssue(IssueCreationService.Issue issue)
             {
                 _issue = issue;
-                issue.Id = ExpectedIssueId;
+                issue.IssueId = ExpectedIssueId;
 
                 return new Task(() => { });
             }
