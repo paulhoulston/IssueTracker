@@ -28,6 +28,13 @@ namespace IssueTracker.Services
             public int IssueId { get; set; }
         }
 
+        [DocumentCollectionId("IssueIds")]
+        public class IssueId : IDocumentItem
+        {
+            public string Id { get; set; }
+            public int CurrentIssueId { get; set; }
+        }
+
         public IssueCreationService(ICreateIssues issueCreator, IGetEventIds eventIdGetter)
         {
             _issueCreator = issueCreator;
