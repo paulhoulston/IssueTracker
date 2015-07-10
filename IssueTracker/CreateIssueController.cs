@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -10,7 +11,7 @@ namespace IssueTracker
     public class CreateIssueController : ApiController
     {
         private readonly IssueCreationService.ICreateIssues _issueCreator = new IssueRepository();
-        private readonly IssueCreationService.IGetEventIds _idGetter = new IssueIdService();
+        private readonly IssueCreationService.IGetEventIds _idGetter = new IssueIdRepository();
 
         public class Issue
         {
@@ -20,24 +21,21 @@ namespace IssueTracker
         [HttpPost, Route("Issues")]
         public async Task<HttpResponseMessage> Post(Issue issue)
         {
+            var response = new HttpResponseMessage();
             try
             {
                 await new IssueCreationService(_issueCreator, _idGetter).CreateIssue(issue.CreatedBy);
-
-                return new HttpResponseMessage(HttpStatusCode.Created);
+                response.StatusCode = HttpStatusCode.Created;
             }
-            catch
+            catch (Exception ex)
             {
-                return new HttpResponseMessage(HttpStatusCode.InternalServerError);
+                response.StatusCode = HttpStatusCode.InternalServerError;
+#if DEBUG
+                response.Content = new StringContent(ex.Message);
+#endif
             }
-        }
-    }
 
-    internal class IssueIdService : IssueCreationService.IGetEventIds
-    {
-        public async Task<int> GetNextId()
-        {
-            return 1;
+            return response;
         }
     }
 }
