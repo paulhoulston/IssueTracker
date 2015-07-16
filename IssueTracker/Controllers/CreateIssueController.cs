@@ -6,11 +6,14 @@ using System.Web.Http;
 using IssueTracker.Adapters;
 using IssueTracker.Attributes;
 using IssueTracker.Services;
+using log4net;
 
 namespace IssueTracker.Controllers
 {
     public class CreateIssueController : ApiController
     {
+        private readonly ILog _logger = LogManager.GetLogger(typeof(CreateIssueController));
+
         private readonly IssueCreationService _service = new IssueCreationService(new IssueRepository(), new IssueIdRepository());
 
         public class Issue
@@ -30,6 +33,7 @@ namespace IssueTracker.Controllers
             }
             catch (Exception ex)
             {
+                _logger.Error(ex.Message, ex);
                 response = Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
             }
 
