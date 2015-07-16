@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net.Http.Formatting;
 using System.Web;
 using System.Web.Http;
-using log4net.Config;
 using Newtonsoft.Json.Serialization;
 
 namespace IssueTracker
@@ -12,9 +11,6 @@ namespace IssueTracker
     {
         protected void Application_Start(object sender, EventArgs e)
         {
-            // Initialize log4net
-            XmlConfigurator.Configure();
-
             GlobalConfiguration.Configure(config =>
             {
                 config.MapHttpAttributeRoutes();
