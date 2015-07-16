@@ -119,6 +119,7 @@
     <Compile Include="Controllers\CreateIssueController.cs" />
     <Compile Include="Controllers\GetIssueController.cs" />
     <Compile Include="Controllers\ListIssuesController.cs" />
+    <Compile Include="AppInsightsExceptionLogger.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
